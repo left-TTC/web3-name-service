@@ -3,12 +3,10 @@ name = "web3_name_service"
 version = "0.1.0"
 edition = "2021"
 authors = ["leftear1321@gmail.com"]
-description = "same as bonfida"
 license = "MIT"             
 repository = "https://github.com/left-TTC/web3-name-service"  
 
 [features]
-default = ["no-entrypoint"]
 no-entrypoint = []
 test-sbf = []
 
