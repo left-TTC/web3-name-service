@@ -1,5 +1,6 @@
 [package]
 name = "web3_name_service"
+description = "web3 name service main program"
 version = "0.1.2"
 edition = "2021"
 authors = ["leftear1321@gmail.com"]
