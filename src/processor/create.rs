@@ -26,6 +26,7 @@ pub fn process_create(
     accounts: &[AccountInfo],
     hashed_name: Vec<u8>,
     lamports: u64,
+    space: u32,
     custom_value: Option<u64>,
 ) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
@@ -100,7 +101,7 @@ pub fn process_create(
         invoke_signed(
             &system_instruction::allocate(
                 &name_account_key,
-                NameRecordHeader::LEN as u64,
+                NameRecordHeader::LEN.saturating_add(space as usize) as u64,
             ),
             &[name_account.clone(), system_program.clone()],
             &[&seeds.chunks(32).collect::<Vec<&[u8]>>()],

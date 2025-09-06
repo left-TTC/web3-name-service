@@ -37,10 +37,13 @@ impl Processor {
             NameRegistryInstruction::Create {
                 hashed_name,
                 lamports,
+                space,
                 custom_value
             } => {
                 msg!("Instruction: Create");
-                create::process_create(program_id, accounts, hashed_name, lamports, custom_value)?;
+                create::process_create(
+                    program_id, accounts, hashed_name, lamports, space, custom_value
+                )?;
             }
             NameRegistryInstruction::Update { offset, data } => {
                 msg!("Instruction: Update Data");
