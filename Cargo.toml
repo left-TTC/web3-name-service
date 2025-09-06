@@ -1,6 +1,6 @@
 [package]
 name = "web3_name_service"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["leftear1321@gmail.com"]
 license = "MIT"             
@@ -9,6 +9,9 @@ repository = "https://github.com/left-TTC/web3-name-service"
 [features]
 no-entrypoint = []
 test-sbf = []
+devnet = []
+
+default = ["devnet"]
 
 [dependencies]
 borsh = "1.5.7"
