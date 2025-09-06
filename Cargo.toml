@@ -1,5 +1,5 @@
 [package]
-name = "web3-name-service"
+name = "web3-domain-name-service"
 description = "web3 name service main program"
 version = "0.1.0"
 edition = "2021"
