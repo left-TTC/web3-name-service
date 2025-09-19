@@ -7,7 +7,6 @@ use {
     },
 };
 
-
 solana_program::entrypoint!(process_instruction);
 
 pub fn process_instruction(
