@@ -14,9 +14,9 @@ use {
 };
 
 
-// can only update the reverse data
-// the reverse owner can only be record central state and register central state
-// so the update can only be called by CPI
+// update caller:
+// central register: init the domain name
+// usr: change value, can all be offset == 0
 pub fn process_update(
     accounts: &[AccountInfo], 
     data: Vec<u8>
