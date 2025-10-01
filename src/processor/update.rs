@@ -14,15 +14,21 @@ use {
 };
 
 
-
-pub fn process_update(accounts: &[AccountInfo], offset: u32, data: Vec<u8>) -> ProgramResult {
+// can only update the reverse data
+// the reverse owner can only be record central state and register central state
+// so the update can only be called by CPI
+pub fn process_update(
+    accounts: &[AccountInfo], 
+    data: Vec<u8>
+) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
     let name_account = next_account_info(accounts_iter)?;
     let name_update_signer = next_account_info(accounts_iter)?;
     let parent_name = next_account_info(accounts_iter).ok();
 
-    let name_record_header = NameRecordHeader::unpack_from_slice(&name_account.data.borrow())?;
+    let name_record_header = 
+        NameRecordHeader::unpack_from_slice(&name_account.data.borrow())?;
 
     // Verifications
     let is_parent_owner = if let Some(parent_name) = parent_name {
@@ -57,7 +63,7 @@ pub fn process_update(accounts: &[AccountInfo], offset: u32, data: Vec<u8>) -> P
     write_data(
         name_account,
         &data,
-        NameRecordHeader::LEN.saturating_add(offset as usize),
+        NameRecordHeader::LEN,
     );
 
     Ok(())

@@ -16,13 +16,12 @@ pub struct NameRecordHeader {
     pub parent_name: Pubkey,
     pub owner: Pubkey,
     pub class: Pubkey,
-    pub custom_price: u64
 }
 
 impl Sealed for NameRecordHeader {}
 
 impl Pack for NameRecordHeader {
-    const LEN: usize = 104;
+    const LEN: usize = 96;
 
     fn pack_into_slice(&self, dst: &mut [u8]) {
         let mut slice = dst;

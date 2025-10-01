@@ -16,12 +16,9 @@ pub mod create;
 pub mod update;
 pub mod transfer;
 
-
 pub struct Processor {}
 
 impl Processor {
-
-
     pub fn process_instruction(
         program_id: &Pubkey,
         accounts: &[AccountInfo],
@@ -38,18 +35,21 @@ impl Processor {
                 hashed_name,
                 lamports,
                 space,
-                custom_value
             } => {
                 msg!("Instruction: Create");
                 create::process_create(
-                    program_id, accounts, hashed_name, lamports, space, custom_value
+                    program_id, accounts, hashed_name, lamports, space,
                 )?;
             }
-            NameRegistryInstruction::Update { offset, data } => {
+            NameRegistryInstruction::Update { 
+                data 
+            } => {
                 msg!("Instruction: Update Data");
-                update::process_update(accounts, offset, data)?;
+                update::process_update(accounts, data)?;
             }
-            NameRegistryInstruction::Transfer { new_owner } => {
+            NameRegistryInstruction::Transfer { 
+                new_owner 
+            } => {
                 msg!("Instruction: Transfer Ownership");
                 transfer::process_transfer(accounts, new_owner)?;
             }

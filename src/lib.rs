@@ -9,7 +9,7 @@ pub mod utils;
 
 pub use solana_program;
 
-solana_program::declare_id!("29CkJByNom4XprPhyntVis1jqjDzHHx43do4oYeDDQRL");
+solana_program::declare_id!("6drdeNVv4G33jUt18qN3GBeESN5yi4tsQv96ZYjw23Qg");
 
 
 //solana program deploy target/sbf-solana-solana/release/web3_name_service.so 

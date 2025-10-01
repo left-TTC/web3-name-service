@@ -1,10 +1,9 @@
 
 use {
     crate::{
-        instruction::{NameRegistryInstruction, DEFAULT_VALUE},
-        state::{write_data, NameRecordHeader}, utils::get_seeds_and_key,
+        instruction::{DEFAULT_VALUE},
+        state::{NameRecordHeader}, utils::get_seeds_and_key,
     },
-    borsh::BorshDeserialize,
     solana_program::{
         account_info::{next_account_info, AccountInfo},
         entrypoint::ProgramResult,
@@ -13,9 +12,7 @@ use {
         program_error::ProgramError,
         program_pack::Pack,
         pubkey::Pubkey,
-        rent::Rent,
         system_instruction,
-        sysvar::Sysvar,
     },
 };
 
@@ -26,7 +23,6 @@ pub fn process_create(
     hashed_name: Vec<u8>,
     lamports: u64,
     space: u32,
-    custom_value: Option<u64>,
 ) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
@@ -84,10 +80,6 @@ pub fn process_create(
     }
 
     if name_account.data.borrow().len() == 0 {
-        // Issue the name registry account
-        // The creation is done in three steps: transfer, allocate and assign, because
-        // one cannot `system_instruction::create` an account to which lamports have
-        // been transferred before.
         invoke(
             &system_instruction::transfer(payer_account.key, &name_account_key, lamports),
             &[
@@ -117,7 +109,6 @@ pub fn process_create(
         parent_name: *parent_name_account.key,
         owner: *name_owner.key,
         class: *name_class.key,
-        custom_price: custom_value.unwrap_or_else(|| DEFAULT_VALUE),
     };
 
     name_state.pack_into_slice(&mut name_account.data.borrow_mut());

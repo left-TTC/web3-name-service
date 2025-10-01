@@ -11,7 +11,11 @@ use {
 };
 
 
-pub fn process_transfer(accounts: &[AccountInfo], new_owner: Pubkey) -> ProgramResult {
+// same as update, can only be called by CPI
+pub fn process_transfer(
+    accounts: &[AccountInfo], 
+    new_owner: Pubkey
+) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
     let name_account = next_account_info(accounts_iter)?;
@@ -34,6 +38,7 @@ pub fn process_transfer(accounts: &[AccountInfo], new_owner: Pubkey) -> ProgramR
     } else {
         false
     };
+
     if !name_owner.is_signer
         || (name_record_header.owner != *name_owner.key && !is_parent_owner)
     {
