@@ -7,7 +7,7 @@ use {
         program_error::ProgramError,
         program_pack::Pack,
         pubkey::Pubkey,
-    }, web3_utils::check::check_account_key
+    }, 
 };
 
 
@@ -24,7 +24,10 @@ pub fn process_transfer(
     let instruction_caller = next_account_info(accounts_iter)?;
     let root_name_account = next_account_info(accounts_iter)?;
 
-    check_account_key(instruction_caller, &CENTARL_STATE_REGISTRA)?;
+    if instruction_caller.key != &CENTARL_STATE_REGISTRA {
+        msg!("caller error");
+        return Err(ProgramError::InvalidArgument);
+    }
 
     let mut name_record_header =
         NameRecordHeader::unpack_from_slice(&name_account.data.borrow())?;
