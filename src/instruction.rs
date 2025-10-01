@@ -19,9 +19,11 @@ pub enum NameRegistryInstruction {
         hashed_name: Vec<u8>,
         lamports: u64,
         space: u32,
+        custom_value: Option<u64>
     },
 
     Update { 
+        offset: u32, 
         data: Vec<u8> 
     },
 
@@ -71,12 +73,13 @@ pub fn create(
 
 pub fn update(
     name_service_program_id: Pubkey,
+    offset: u32,
     data: Vec<u8>,
     name_account_key: Pubkey,
     name_update_signer: Pubkey,
     name_parent: Option<Pubkey>,
 ) -> Result<Instruction, ProgramError> {
-    let instruction_data = NameRegistryInstruction::Update { data };
+    let instruction_data = NameRegistryInstruction::Update { offset, data };
     let data = borsh::to_vec(&instruction_data).unwrap();
     let mut accounts = vec![
         AccountMeta::new(name_account_key, false),

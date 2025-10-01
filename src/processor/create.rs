@@ -23,6 +23,7 @@ pub fn process_create(
     hashed_name: Vec<u8>,
     lamports: u64,
     space: u32,
+    custom_value: Option<u64>,
 ) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
@@ -80,35 +81,36 @@ pub fn process_create(
     }
 
     if name_account.data.borrow().len() == 0 {
-        invoke(
-            &system_instruction::transfer(payer_account.key, &name_account_key, lamports),
-            &[
-                payer_account.clone(),
-                name_account.clone(),
-                system_program.clone(),
-            ],
-        )?;
+            invoke(
+                &system_instruction::transfer(payer_account.key, &name_account_key, lamports),
+                &[
+                    payer_account.clone(),
+                    name_account.clone(),
+                    system_program.clone(),
+                ],
+            )?;
 
-        invoke_signed(
-            &system_instruction::allocate(
-                &name_account_key,
-                NameRecordHeader::LEN.saturating_add(space as usize) as u64,
-            ),
-            &[name_account.clone(), system_program.clone()],
-            &[&seeds.chunks(32).collect::<Vec<&[u8]>>()],
-        )?;
+            invoke_signed(
+                &system_instruction::allocate(
+                    &name_account_key,
+                    NameRecordHeader::LEN.saturating_add(space as usize) as u64,
+                ),
+                &[name_account.clone(), system_program.clone()],
+                &[&seeds.chunks(32).collect::<Vec<&[u8]>>()],
+            )?;
 
-        invoke_signed(
-            &system_instruction::assign(name_account.key, program_id),
-            &[name_account.clone(), system_program.clone()],
-            &[&seeds.chunks(32).collect::<Vec<&[u8]>>()],
-        )?;
+            invoke_signed(
+                &system_instruction::assign(name_account.key, program_id),
+                &[name_account.clone(), system_program.clone()],
+                &[&seeds.chunks(32).collect::<Vec<&[u8]>>()],
+            )?;
     }
 
     let name_state = NameRecordHeader {
         parent_name: *parent_name_account.key,
         owner: *name_owner.key,
         class: *name_class.key,
+        custom_price: custom_value.unwrap_or_else(|| DEFAULT_VALUE),
     };
 
     name_state.pack_into_slice(&mut name_account.data.borrow_mut());

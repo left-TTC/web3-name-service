@@ -14,23 +14,17 @@ use {
 };
 
 
-// update caller:
-// central register: init the domain name
-// usr: change value, can all be offset == 0
-pub fn process_update(
-    accounts: &[AccountInfo], 
-    data: Vec<u8>
-) -> ProgramResult {
+// change to could update any place's data
+pub fn process_update(accounts: &[AccountInfo], offset: u32, data: Vec<u8>) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
     let name_account = next_account_info(accounts_iter)?;
     let name_update_signer = next_account_info(accounts_iter)?;
     let parent_name = next_account_info(accounts_iter).ok();
 
-    let name_record_header = 
-        NameRecordHeader::unpack_from_slice(&name_account.data.borrow())?;
+    let name_record_header = NameRecordHeader::unpack_from_slice(&name_account.data.borrow())?;
 
-    // Verifications: 
+    // Verifications
     let is_parent_owner = if let Some(parent_name) = parent_name {
         if name_record_header.parent_name != *parent_name.key {
             msg!("Invalid parent name account");
@@ -63,7 +57,7 @@ pub fn process_update(
     write_data(
         name_account,
         &data,
-        NameRecordHeader::LEN,
+        offset as usize,
     );
 
     Ok(())
