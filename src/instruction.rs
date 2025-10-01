@@ -11,7 +11,7 @@ use{
 #[cfg(not(feature="devnet"))]
 pub const DEFAULT_VALUE: u64  = 999999999999;
 #[cfg(feature="devnet")]
-pub const DEFAULT_VALUE: u64  = 99999;
+pub const DEFAULT_VALUE: u64  = 99999999;
 
 #[derive(Clone, Debug, BorshSerialize, BorshDeserialize, PartialEq)]
 pub enum NameRegistryInstruction {
@@ -28,7 +28,8 @@ pub enum NameRegistryInstruction {
     },
 
     Transfer { 
-        new_owner: Pubkey 
+        new_owner: Pubkey,
+        custom_value: Option<u64>, 
     },
 }
 
@@ -99,8 +100,10 @@ pub fn transfer(
     name_account_key: Pubkey,
     instruction_caller: Pubkey,
     root_name_account: Pubkey,
+    new_custom_value: Option<u64>,
 ) -> Result<Instruction, ProgramError> {
-    let instruction_data = NameRegistryInstruction::Transfer { new_owner };
+    let instruction_data = NameRegistryInstruction::Transfer { 
+        new_owner, custom_value: new_custom_value };
     let data = borsh::to_vec(&instruction_data).unwrap();
     let accounts = vec![
         AccountMeta::new(name_account_key, false),

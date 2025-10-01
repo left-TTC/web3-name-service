@@ -52,10 +52,10 @@ impl Processor {
                 update::process_update(accounts, offset, data)?;
             }
             NameRegistryInstruction::Transfer { 
-                new_owner 
+                new_owner, custom_value 
             } => {
                 msg!("Instruction: Transfer Ownership");
-                transfer::process_transfer(accounts, new_owner)?;
+                transfer::process_transfer(accounts, new_owner, custom_value)?;
             }
         }
         Ok(())

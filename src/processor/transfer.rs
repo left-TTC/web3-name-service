@@ -1,6 +1,6 @@
 
 use {
-    crate::{state::NameRecordHeader, utils::CENTARL_STATE_REGISTRA}, solana_program::{
+    crate::{instruction::DEFAULT_VALUE, state::NameRecordHeader, utils::CENTARL_STATE_REGISTRA}, solana_program::{
         account_info::{next_account_info, AccountInfo},
         entrypoint::ProgramResult,
         msg,
@@ -16,7 +16,8 @@ use {
 // so the function will only called when CPI
 pub fn process_transfer(
     accounts: &[AccountInfo], 
-    new_owner: Pubkey
+    new_owner: Pubkey,
+    new_custom_value: Option<u64>
 ) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
@@ -45,6 +46,13 @@ pub fn process_transfer(
         return Err(ProgramError::InvalidArgument);
     }
 
+    if let Some(value) = new_custom_value {
+        name_record_header.custom_price = value
+    }else {
+        name_record_header.custom_price = DEFAULT_VALUE
+    }
+
+    msg!("new value: {} dollar", name_record_header.custom_price / 1000000 );
 
     name_record_header.owner = new_owner;
     name_record_header
