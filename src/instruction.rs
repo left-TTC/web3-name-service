@@ -77,18 +77,13 @@ pub fn update(
     data: Vec<u8>,
     name_account_key: Pubkey,
     name_update_signer: Pubkey,
-    name_parent: Option<Pubkey>,
 ) -> Result<Instruction, ProgramError> {
     let instruction_data = NameRegistryInstruction::Update { offset, data };
     let data = borsh::to_vec(&instruction_data).unwrap();
-    let mut accounts = vec![
+    let accounts = vec![
         AccountMeta::new(name_account_key, false),
         AccountMeta::new_readonly(name_update_signer, true),
     ];
-
-    if let Some(name_parent_key) = name_parent {
-        accounts.push(AccountMeta::new(name_parent_key, false))
-    }
 
     Ok(Instruction {
         program_id: name_service_program_id,
@@ -102,19 +97,16 @@ pub fn transfer(
     name_service_program_id: Pubkey,
     new_owner: Pubkey,
     name_account_key: Pubkey,
-    name_owner_key: Pubkey,
-    name_class_opt: Option<Pubkey>,
+    instruction_caller: Pubkey,
+    root_name_account: Pubkey,
 ) -> Result<Instruction, ProgramError> {
     let instruction_data = NameRegistryInstruction::Transfer { new_owner };
     let data = borsh::to_vec(&instruction_data).unwrap();
-    let mut accounts = vec![
+    let accounts = vec![
         AccountMeta::new(name_account_key, false),
-        AccountMeta::new_readonly(name_owner_key, true),
+        AccountMeta::new_readonly(instruction_caller, true),
+        AccountMeta::new_readonly(root_name_account, false),
     ];
-
-    if let Some(key) = name_class_opt {
-        accounts.push(AccountMeta::new_readonly(key, true));
-    }
 
     Ok(Instruction {
         program_id: name_service_program_id,

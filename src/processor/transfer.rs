@@ -1,17 +1,19 @@
 
 use {
-    crate::state::NameRecordHeader, solana_program::{
+    crate::{state::NameRecordHeader, utils::CENTARL_STATE_REGISTRA}, solana_program::{
         account_info::{next_account_info, AccountInfo},
         entrypoint::ProgramResult,
         msg,
         program_error::ProgramError,
         program_pack::Pack,
         pubkey::Pubkey,
-    }
+    }, web3_utils::check::check_account_key
 };
 
 
-// same as update, can only be called by CPI
+// only one case we will use the transfer function:
+// when we buy a domain that owned by others
+// so the function will only called when CPI
 pub fn process_transfer(
     accounts: &[AccountInfo], 
     new_owner: Pubkey
@@ -19,40 +21,27 @@ pub fn process_transfer(
     let accounts_iter = &mut accounts.iter();
 
     let name_account = next_account_info(accounts_iter)?;
-    let name_owner = next_account_info(accounts_iter)?;
-    let name_class_opt = next_account_info(accounts_iter).ok();
-    let parent_name = next_account_info(accounts_iter).ok();
+    let instruction_caller = next_account_info(accounts_iter)?;
+    let root_name_account = next_account_info(accounts_iter)?;
+
+    check_account_key(instruction_caller, &CENTARL_STATE_REGISTRA)?;
 
     let mut name_record_header =
         NameRecordHeader::unpack_from_slice(&name_account.data.borrow())?;
 
-    // Verifications
-    let is_parent_owner = if let Some(parent_name) = parent_name {
-        if name_record_header.parent_name != *parent_name.key {
-            msg!("Invalid parent name account");
-            return Err(ProgramError::InvalidArgument);
-        }
-        let parent_name_record_header =
-            NameRecordHeader::unpack_from_slice(&parent_name.data.borrow())?;
-        parent_name_record_header.owner == *name_owner.key
-    } else {
-        false
-    };
+    if &name_record_header.parent_name != root_name_account.key {
+        msg!("root domain account error");
+        return Err(ProgramError::InvalidArgument);
+    }
 
-    if !name_owner.is_signer
-        || (name_record_header.owner != *name_owner.key && !is_parent_owner)
-    {
-        msg!("The given name owner is incorrect or not a signer.");
+    let root_name_state = 
+        NameRecordHeader::unpack_from_slice(&root_name_account.data.borrow())?;
+
+    if instruction_caller.key != &root_name_state.owner || !instruction_caller.is_signer || root_name_state.class != Pubkey::default(){
+        msg!("not the register central called the instruction");
         return Err(ProgramError::InvalidArgument);
     }
-    if name_record_header.class != Pubkey::default()
-        && (name_class_opt.is_none()
-            || name_record_header.class != *name_class_opt.unwrap().key
-            || !name_class_opt.unwrap().is_signer)
-    {
-        msg!("The given name class account is incorrect or not a signer.");
-        return Err(ProgramError::InvalidArgument);
-    }
+
 
     name_record_header.owner = new_owner;
     name_record_header

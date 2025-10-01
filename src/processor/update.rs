@@ -13,43 +13,38 @@ use {
     },
 };
 
+// the case we will use the update function:
+// case 1: create domain, we will use it to add the reverse name
+// case 2: revise custom price 
 
-// change to could update any place's data
+
+// NameRecordHeader::LEN - 8 means the owner can only change the customPrice
 pub fn process_update(accounts: &[AccountInfo], offset: u32, data: Vec<u8>) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
     let name_account = next_account_info(accounts_iter)?;
+    // always be two central states
     let name_update_signer = next_account_info(accounts_iter)?;
-    let parent_name = next_account_info(accounts_iter).ok();
 
     let name_record_header = NameRecordHeader::unpack_from_slice(&name_account.data.borrow())?;
 
-    // Verifications
-    let is_parent_owner = if let Some(parent_name) = parent_name {
-        if name_record_header.parent_name != *parent_name.key {
-            msg!("Invalid parent name account");
-            return Err(ProgramError::InvalidArgument);
-        }
-        let parent_name_record_header =
-            NameRecordHeader::unpack_from_slice(&parent_name.data.borrow())?;
-        parent_name_record_header.owner == *name_update_signer.key
-    } else {
-        false
-    };
     if !name_update_signer.is_signer {
         msg!("The given name class or owner is not a signer.");
         return Err(ProgramError::InvalidArgument);
     }
-    if name_record_header.class != Pubkey::default()
-        && *name_update_signer.key != name_record_header.class
-    {
+
+    // means reverse account
+    // only the 
+    if name_record_header.class != Pubkey::default()                
+        && *name_update_signer.key != name_record_header.class {    
         msg!("The given name class account is incorrect.");
         return Err(ProgramError::InvalidArgument);
     }
+
+    // means common domain key
+    // only the domain owner can update the custom price
     if name_record_header.class == Pubkey::default()
-        && *name_update_signer.key != name_record_header.owner
-        && !is_parent_owner
-    {
+        && *name_update_signer.key != name_record_header.owner{
         msg!("The given name owner account is incorrect.");
         return Err(ProgramError::InvalidArgument);
     }
@@ -57,7 +52,10 @@ pub fn process_update(accounts: &[AccountInfo], offset: u32, data: Vec<u8>) -> P
     write_data(
         name_account,
         &data,
-        offset as usize,
+        // only two cases:
+        // 1. common domain: offset = 0 and usr will revise the custom price
+        // 2. reverse domain: owner is cenatral state => offset = 8 and only update the domain name
+        (NameRecordHeader::LEN - 8).saturating_add(offset as usize),
     );
 
     Ok(())
