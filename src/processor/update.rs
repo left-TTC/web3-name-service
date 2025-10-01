@@ -30,7 +30,7 @@ pub fn process_update(
     let name_record_header = 
         NameRecordHeader::unpack_from_slice(&name_account.data.borrow())?;
 
-    // Verifications
+    // Verifications: 
     let is_parent_owner = if let Some(parent_name) = parent_name {
         if name_record_header.parent_name != *parent_name.key {
             msg!("Invalid parent name account");

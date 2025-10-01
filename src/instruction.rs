@@ -19,6 +19,7 @@ pub enum NameRegistryInstruction {
         hashed_name: Vec<u8>,
         lamports: u64,
         space: u32,
+        custom_value: Option<u64>
     },
 
     Update { 

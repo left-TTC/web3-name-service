@@ -23,6 +23,7 @@ pub fn process_create(
     hashed_name: Vec<u8>,
     lamports: u64,
     space: u32,
+    custom_value: Option<u64>,
 ) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
