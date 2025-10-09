@@ -15,7 +15,7 @@ use {
 pub mod create;
 pub mod update;
 pub mod transfer;
-
+pub mod realloc;
 pub struct Processor {}
 
 impl Processor {
@@ -56,6 +56,10 @@ impl Processor {
             } => {
                 msg!("Instruction: Transfer Ownership");
                 transfer::process_transfer(accounts, new_owner, custom_value)?;
+            }
+            NameRegistryInstruction::Realloc { space } => {
+                msg!("Instruction: Realloc Name Record");
+                realloc::process_realloc(accounts, space)?;
             }
         }
         Ok(())

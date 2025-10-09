@@ -1805,12 +1805,13 @@ dependencies = [
 
 [[package]]
 name = "web3-domain-name-service"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
  "borsh 1.5.7",
  "num-derive",
  "num-traits",
  "solana-program",
+ "solana-system-interface",
  "thiserror",
 ]
 

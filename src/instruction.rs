@@ -31,6 +31,12 @@ pub enum NameRegistryInstruction {
         new_owner: Pubkey,
         custom_value: Option<u64>, 
     },
+
+    Realloc {
+        // New total number of bytes in addition to the `NameRecordHeader`.
+        // can only be larger than last time 
+        space: u32,
+    },
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -71,6 +77,7 @@ pub fn create(
         data,
     })
 }
+
 
 pub fn update(
     name_service_program_id: Pubkey,
@@ -119,4 +126,26 @@ pub fn transfer(
 }
 
 
+pub fn realloc(
+    name_service_program_id: Pubkey,
+    payer_key: Pubkey,
+    name_account_key: Pubkey,
+    name_owner_key: Pubkey,
+    // the content length
+    space: u32,
+) -> Result<Instruction, ProgramError> {
+    let instruction_data = NameRegistryInstruction::Realloc { space };
+    let data = borsh::to_vec(&instruction_data).unwrap();
+    let accounts = vec![
+        AccountMeta::new_readonly(system_program::id(), false),
+        AccountMeta::new(payer_key, true),
+        AccountMeta::new(name_account_key, false),
+        AccountMeta::new_readonly(name_owner_key, true),
+    ];
 
+    Ok(Instruction {
+        program_id: name_service_program_id,
+        accounts,
+        data,
+    })
+}
