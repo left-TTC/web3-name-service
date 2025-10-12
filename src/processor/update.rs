@@ -23,7 +23,7 @@ pub fn process_update(accounts: &[AccountInfo], offset: u32, data: Vec<u8>) -> P
     let accounts_iter = &mut accounts.iter();
 
     let name_account = next_account_info(accounts_iter)?;
-    // always be two central states
+    // always be two central states or the owner
     let name_update_signer = next_account_info(accounts_iter)?;
 
     let name_record_header = NameRecordHeader::unpack_from_slice(&name_account.data.borrow())?;
@@ -54,7 +54,7 @@ pub fn process_update(accounts: &[AccountInfo], offset: u32, data: Vec<u8>) -> P
         &data,
         // only two cases:
         // 1. common domain: offset = 0 and usr will revise the custom price
-        // 2. reverse domain: owner is cenatral state => offset = 8 and only update the domain name
+        // 2. reverse domain: owner is cenatral state => offset = 8 and only update the domain reverse name
         (NameRecordHeader::LEN - 8).saturating_add(offset as usize),
     );
 
