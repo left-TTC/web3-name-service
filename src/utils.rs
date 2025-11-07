@@ -3,7 +3,7 @@ use {
     solana_program::{pubkey::{Pubkey}, pubkey}
 };
 
-pub const CENTARL_STATE_REGISTRA: Pubkey = pubkey!("MLUCvnLm7HHBiHnr8bHA6XMZQJbMXewocDRvpaVhFcf");
+pub const CENTARL_STATE_REGISTRA: Pubkey = pubkey!("3XUTY9ffnMWGmQ7snyhvNb7uGsw4jgerfkPeScCjq7ET");
 
 pub const HASH_PREFIX: &str = "WEB3 Name Service";
 
