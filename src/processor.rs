@@ -16,7 +16,7 @@ pub mod create;
 pub mod update;
 pub mod transfer;
 pub mod realloc;
-pub mod freze;
+pub mod freeze;
 pub struct Processor {}
 
 impl Processor {
@@ -63,7 +63,7 @@ impl Processor {
             }
             NameRegistryInstruction::FreezeAccount => {
                 msg!("Instruction: Freeze Account");
-                freze::process_freeze_account(program_id, accounts)?;
+                freeze::process_freeze_account(program_id, accounts)?;
             }
         }
         Ok(())
