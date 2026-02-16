@@ -37,6 +37,8 @@ pub enum NameRegistryInstruction {
         // can only be larger than last time 
         space: u32,
     },
+
+    FreezeAccount,
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -139,6 +141,26 @@ pub fn realloc(
     let accounts = vec![
         AccountMeta::new_readonly(system_program::id(), false),
         AccountMeta::new(payer_key, true),
+        AccountMeta::new(name_account_key, false),
+        AccountMeta::new_readonly(name_owner_key, true),
+    ];
+
+    Ok(Instruction {
+        program_id: name_service_program_id,
+        accounts,
+        data,
+    })
+}
+
+
+pub fn freeze_account(
+    name_service_program_id: Pubkey,
+    name_account_key: Pubkey,
+    name_owner_key: Pubkey,
+) -> Result<Instruction, ProgramError> {
+    let instruction_data = NameRegistryInstruction::FreezeAccount;
+    let data = borsh::to_vec(&instruction_data).unwrap();
+    let accounts = vec![
         AccountMeta::new(name_account_key, false),
         AccountMeta::new_readonly(name_owner_key, true),
     ];

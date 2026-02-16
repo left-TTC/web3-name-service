@@ -16,10 +16,10 @@ pub mod create;
 pub mod update;
 pub mod transfer;
 pub mod realloc;
+pub mod freze;
 pub struct Processor {}
 
 impl Processor {
-
 
     pub fn process_instruction(
         program_id: &Pubkey,
@@ -61,22 +61,13 @@ impl Processor {
                 msg!("Instruction: Realloc Name Record");
                 realloc::process_realloc(accounts, space)?;
             }
+            NameRegistryInstruction::FreezeAccount => {
+                msg!("Instruction: Freeze Account");
+                freze::process_freeze_account(program_id, accounts)?;
+            }
         }
         Ok(())
     }
-
-
-
-
-
-
-
-
-    
-
-
-
-    
 
     
 }

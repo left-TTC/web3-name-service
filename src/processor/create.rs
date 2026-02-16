@@ -111,6 +111,7 @@ pub fn process_create(
         owner: *name_owner.key,
         class: *name_class.key,
         custom_price: custom_value.unwrap_or_else(|| DEFAULT_VALUE),
+        is_frozen: false,
     };
 
     name_state.pack_into_slice(&mut name_account.data.borrow_mut());
