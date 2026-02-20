@@ -16,8 +16,8 @@ pub struct NameRecordHeader {
     pub parent_name: Pubkey,
     pub owner: Pubkey,
     pub class: Pubkey,
-    pub custom_price: u64,
     pub is_frozen: bool,
+    pub custom_price: u64,
 }
 
 impl Sealed for NameRecordHeader {}
