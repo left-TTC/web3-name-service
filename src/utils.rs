@@ -1,6 +1,6 @@
 
 use {
-    solana_program::{pubkey::{Pubkey}, pubkey}
+    solana_program::{pubkey::{Pubkey}}
 };
 
 
