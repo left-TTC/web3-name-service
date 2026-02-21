@@ -17,6 +17,7 @@ pub mod update;
 pub mod transfer;
 pub mod realloc;
 pub mod freeze;
+pub mod preview;
 pub struct Processor {}
 
 impl Processor {
@@ -64,6 +65,10 @@ impl Processor {
             NameRegistryInstruction::FreezeAccount => {
                 msg!("Instruction: Freeze Account");
                 freeze::process_freeze_account(program_id, accounts)?;
+            }
+            NameRegistryInstruction::ChangePreview { new_preview } => {
+                msg!("Instruction: Set new Preview");
+                preview::process_change_preview(program_id, accounts, new_preview)?;
             }
         }
         Ok(())

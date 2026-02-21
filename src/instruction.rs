@@ -39,6 +39,10 @@ pub enum NameRegistryInstruction {
     },
 
     FreezeAccount,
+
+    ChangePreview {
+        new_preview: Pubkey,
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -49,6 +53,7 @@ pub fn create(
     payer_key: Pubkey,
     name_owner: Pubkey,
     name_class_opt: Option<Pubkey>,
+    previewer_opt: Option<Pubkey>,
     name_parent_opt: Option<Pubkey>,
     name_parent_owner_opt: Option<Pubkey>,
 ) -> Result<Instruction, ProgramError> {
@@ -59,16 +64,25 @@ pub fn create(
         AccountMeta::new(name_account_key, false),
         AccountMeta::new_readonly(name_owner, false),
     ];
+
     if let Some(name_class) = name_class_opt {
         accounts.push(AccountMeta::new_readonly(name_class, true));
     } else {
         accounts.push(AccountMeta::new_readonly(Pubkey::default(), false));
     }
+
+    if let Some(previewer) = previewer_opt {
+        accounts.push(AccountMeta::new_readonly(previewer, false));
+    }else {
+        accounts.push(AccountMeta::new_readonly(Pubkey::default(), false));
+    }
+
     if let Some(name_parent) = name_parent_opt {
         accounts.push(AccountMeta::new_readonly(name_parent, false));
     } else {
         accounts.push(AccountMeta::new_readonly(Pubkey::default(), false));
     }
+
     if let Some(key) = name_parent_owner_opt {
         accounts.push(AccountMeta::new_readonly(key, true));
     }
@@ -153,16 +167,19 @@ pub fn realloc(
 }
 
 
-pub fn freeze_account(
+pub fn change_preview(
     name_service_program_id: Pubkey,
     name_account_key: Pubkey,
-    name_owner_key: Pubkey,
+    root_name_account_key: Pubkey,
+    root_owner_key: Pubkey,
+    new_preview: Pubkey,
 ) -> Result<Instruction, ProgramError> {
-    let instruction_data = NameRegistryInstruction::FreezeAccount;
+    let instruction_data = NameRegistryInstruction::ChangePreview { new_preview };
     let data = borsh::to_vec(&instruction_data).unwrap();
     let accounts = vec![
         AccountMeta::new(name_account_key, false),
-        AccountMeta::new_readonly(name_owner_key, true),
+        AccountMeta::new_readonly(root_name_account_key, false),
+        AccountMeta::new_readonly(root_owner_key, true),
     ];
 
     Ok(Instruction {
