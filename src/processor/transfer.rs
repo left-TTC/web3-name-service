@@ -53,6 +53,7 @@ pub fn process_transfer(
 
     msg!("new value: {} dollar", name_record_header.custom_price / 1000000 );
 
+    name_record_header.previewer = Pubkey::default();
     name_record_header.owner = new_owner;
     name_record_header
         .pack_into_slice(&mut name_account.data.borrow_mut()[..NameRecordHeader::LEN]);
