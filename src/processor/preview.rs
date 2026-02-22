@@ -32,8 +32,8 @@ pub fn process_change_preview(
 
     let mut name_record_header =
         NameRecordHeader::unpack_from_slice(&name_account.data.borrow())?;
-    if name_record_header.previewer == Pubkey::default() || name_record_header.previewer == previewer {
-        msg!("fault previewer");
+    if name_record_header.previewer != Pubkey::default() || name_record_header.previewer == previewer {
+        msg!("fault previewer or already changed");
         return Err(ProgramError::InvalidArgument);
     }
 

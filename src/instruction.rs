@@ -11,7 +11,7 @@ use{
 #[cfg(not(feature="devnet"))]
 pub const DEFAULT_VALUE: u64  = 999999999999;
 #[cfg(feature="devnet")]
-pub const DEFAULT_VALUE: u64  = 99999999;
+pub const DEFAULT_VALUE: u64  = 100_000_000_000_000;
 
 #[derive(Clone, Debug, BorshSerialize, BorshDeserialize, PartialEq)]
 pub enum NameRegistryInstruction {

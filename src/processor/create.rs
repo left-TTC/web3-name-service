@@ -66,18 +66,18 @@ pub fn process_create(
         let parent_owner = parent_name_owner.unwrap();
         if !parent_owner.is_signer {
             msg!("The given parent name account owner is not a signer.");
-            let parent_name_record_header =
-                NameRecordHeader::unpack_from_slice(&parent_name_account.data.borrow())?;
-            if &parent_name_record_header.previewer != parent_owner.key {
-                msg!("The caller is not the previewer too");
-                return Err(ProgramError::InvalidArgument);
-            }
+            return Err(ProgramError::InvalidArgument);
         } else {
             let parent_name_record_header =
                 NameRecordHeader::unpack_from_slice(&parent_name_account.data.borrow())?;
             if &parent_name_record_header.owner != parent_owner.key {
                 msg!("The given parent name account owner is not correct.");
-                return Err(ProgramError::InvalidArgument);
+                let parent_name_record_header =
+                    NameRecordHeader::unpack_from_slice(&parent_name_account.data.borrow())?;
+                if &parent_name_record_header.previewer != parent_owner.key {
+                    msg!("The caller is not the previewer too");
+                    return Err(ProgramError::InvalidArgument);
+                }
             }
         }
     }
